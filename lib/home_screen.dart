@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'pengumuman_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -81,7 +82,7 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 24),
 
                     // Pengumuman Section
-                    _buildAnnouncementsSection(),
+                    _buildAnnouncementsSection(context),
                     const SizedBox(height: 24),
 
                     // Progres Kelas Section
@@ -150,7 +151,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAnnouncementsSection() {
+  Widget _buildAnnouncementsSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -167,7 +168,12 @@ class HomeScreen extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                // Handle "Lihat Semua" tap
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PengumumanScreen(),
+                  ),
+                );
               },
               child: const Text(
                 'Lihat Semua',
