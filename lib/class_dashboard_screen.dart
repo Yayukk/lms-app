@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'quiz_screen.dart';
+import 'task_detail_screen.dart';
 
 class ClassDashboardScreen extends StatefulWidget {
   final String courseName;
@@ -21,6 +22,7 @@ class _ClassDashboardScreenState extends State<ClassDashboardScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _selectedTabIndex = 0;
+  int _materialBottomSheetTabIndex = 0; // For material bottom sheet tabs
 
   @override
   void initState() {
@@ -345,6 +347,20 @@ class _ClassDashboardScreenState extends State<ClassDashboardScreen>
             'UTS',
             Colors.red,
           ),
+          const SizedBox(height: 12),
+          _buildTugasItem(
+            'Tugas 3: Memory Management',
+            'Jumat, 11 Maret 2025',
+            'Tugas',
+            Colors.orange,
+          ),
+          const SizedBox(height: 12),
+          _buildTugasItem(
+            'Quis 2: File System',
+            'Senin, 14 Maret 2025',
+            'Quis',
+            Colors.blue,
+          ),
         ],
       ),
     );
@@ -372,6 +388,9 @@ class _ClassDashboardScreenState extends State<ClassDashboardScreen>
                   ),
             ),
           );
+        } else {
+          // Show action dialog for assignments
+          _showTugasActionDialog(title, dueDate, type);
         }
       },
       child: Container(
@@ -526,7 +545,7 @@ class _ClassDashboardScreenState extends State<ClassDashboardScreen>
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'Konsep dasar User Interface Design akan dipelajari bagaimana\nmembangun sebuah Interaction Design pada antarmuka.\nInteraction ini sangat penting untuk aplikasi berkomunikasi dengan\npengguna. Lalu dipelajari juga poin-poin penting pada interaction\ndesign seperti visibility, feedback, limitation, consistency dan\naffordance. Dan terakhir materi conceptual dan perceptual design\ninteraction akan memberikan gambaran bagaimana bentuk dari\nInteraction.',
+                  'Konsep dasar User Interface Design akan dipelajari bagaimana\nmembangun sebuah Interaction Design pada antarmuka.\nInteraction ini sangat penting untuk aplikasi berkomunikasi dengan\npengguna. ',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey[700],
@@ -551,22 +570,28 @@ class _ClassDashboardScreenState extends State<ClassDashboardScreen>
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
-                            // Switch to materi tab logic
+                            _materialBottomSheetTabIndex = 0;
                           });
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color:
+                                _materialBottomSheetTabIndex == 0
+                                    ? Colors.white
+                                    : Colors.transparent,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Lampiran Materi',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF8B0000),
+                              color:
+                                  _materialBottomSheetTabIndex == 0
+                                      ? const Color(0xFF8B0000)
+                                      : Colors.grey[600],
                             ),
                           ),
                         ),
@@ -576,13 +601,16 @@ class _ClassDashboardScreenState extends State<ClassDashboardScreen>
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
-                            // Switch to tugas tab logic
+                            _materialBottomSheetTabIndex = 1;
                           });
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
-                            color: Colors.transparent,
+                            color:
+                                _materialBottomSheetTabIndex == 1
+                                    ? Colors.white
+                                    : Colors.transparent,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -591,7 +619,10 @@ class _ClassDashboardScreenState extends State<ClassDashboardScreen>
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: Colors.grey[600],
+                              color:
+                                  _materialBottomSheetTabIndex == 1
+                                      ? const Color(0xFF8B0000)
+                                      : Colors.grey[600],
                             ),
                           ),
                         ),
@@ -605,14 +636,15 @@ class _ClassDashboardScreenState extends State<ClassDashboardScreen>
 
               // Content Area
               Expanded(
-                child: Container(
-                  width: double.infinity,
+                child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Materi Content
-                      _buildMateriContentList(),
+                      if (_materialBottomSheetTabIndex == 0)
+                        _buildMateriContentList()
+                      else
+                        _buildTugasContentList(),
                     ],
                   ),
                 ),
@@ -691,55 +723,102 @@ class _ClassDashboardScreenState extends State<ClassDashboardScreen>
     );
   }
 
+  Widget _buildTugasContentList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Tugas & Quis',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Sample Tugas Items
+        _buildTugasContentItem(
+          Icons.assignment,
+          'Tugas 1: Analisis Interface Aplikasi',
+          'Buatlah analisis interface dari 3 aplikasi mobile populer dan identifikasi prinsip UI/UX yang digunakan.',
+        ),
+        const SizedBox(height: 12),
+        _buildTugasContentItem(
+          Icons.quiz,
+          'Quis 1: Konsep Dasar User Interface',
+          'Test pemahaman tentang konsep dasar user interface design dan interaction principles.',
+        ),
+        const SizedBox(height: 12),
+        _buildTugasContentItem(
+          Icons.assignment,
+          'Tugas 2: Redesign User Experience',
+          'Rancang ulang pengalaman pengguna untuk aplikasi e-commerce dengan fokus pada kemudahan penggunaan.',
+        ),
+        const SizedBox(height: 12),
+        _buildTugasContentItem(
+          Icons.quiz,
+          'Quis 2: Interaction Design Principles',
+          'Evaluasi pemahaman tentang prinsip-prinsip interaction design dan aplikasinya dalam开发 aplikasi.',
+        ),
+      ],
+    );
+  }
+
   Widget _buildMateriContentItem(IconData icon, String title, String subtitle) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF8B0000).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(6),
+    return GestureDetector(
+      onTap: () {
+        _showContentActionDialog(title);
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey[200]!),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF8B0000).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Icon(icon, color: const Color(0xFF8B0000), size: 16),
             ),
-            child: Icon(icon, color: const Color(0xFF8B0000), size: 16),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: TextStyle(fontSize: 11, color: Colors.grey[600]),
-                ),
-              ],
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(4),
-            child: const Icon(
-              Icons.check_circle,
-              color: Colors.green,
-              size: 16,
+            Container(
+              padding: const EdgeInsets.all(4),
+              child: const Icon(
+                Icons.check_circle,
+                color: Colors.green,
+                size: 16,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -749,59 +828,157 @@ class _ClassDashboardScreenState extends State<ClassDashboardScreen>
     String title,
     String description,
   ) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF8B0000).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(6),
+    return GestureDetector(
+      onTap: () {
+        _showContentActionDialog(title);
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey[200]!),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF8B0000).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Icon(icon, color: const Color(0xFF8B0000), size: 16),
             ),
-            child: Icon(icon, color: const Color(0xFF8B0000), size: 16),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey[600],
-                    height: 1.3,
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey[600],
+                      height: 1.3,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(4),
-            child: const Icon(
-              Icons.check_circle,
-              color: Colors.green,
-              size: 16,
+            Container(
+              padding: const EdgeInsets.all(4),
+              child: const Icon(
+                Icons.check_circle,
+                color: Colors.green,
+                size: 16,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+
+  void _showContentActionDialog(String title) {
+    // Check if this is the "Contoh Case Study Aplikasi Mobile" item
+    if (title.contains('Contoh Case Study Aplikasi Mobile')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => const TaskDetailScreen(
+                taskTitle: 'Contoh Case Study Aplikasi Mobile',
+                dueDate: 'Jumat, 26 Februari 2025',
+                taskType: 'Tugas',
+              ),
+        ),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: Text(title),
+          content: const Text(
+            'Fitur untuk membuka konten ini akan diimplementasikan soon.',
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF8B0000),
+              ),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showTugasActionDialog(String title, String dueDate, String type) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: Text(title),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Tipe: $type'),
+              const SizedBox(height: 8),
+              Text('Batas Waktu: $dueDate'),
+              const SizedBox(height: 16),
+              const Text(
+                'Anda dapat mengerjakan tugas ini dan mengupload jawaban Anda.',
+                style: TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Here you can add navigation to assignment detail or submission screen
+                _showContentActionDialog(
+                  'Fitur pengumpulan tugas akan segera tersedia',
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF8B0000),
+              ),
+              child: const Text('Kerjakan'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
