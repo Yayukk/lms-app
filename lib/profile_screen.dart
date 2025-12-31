@@ -157,14 +157,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildDynamicContent() {
     switch (_selectedIndex) {
       case 0:
-        return _buildContentCard('ini adalah aboutme');
+        return _buildAboutMeContent();
       case 1:
         return _buildContentCard('ini adalah class');
       case 2:
         return _buildContentCard('ini edit profile');
       default:
-        return _buildContentCard('ini adalah aboutme');
+        return _buildAboutMeContent();
     }
+  }
+
+  Widget _buildAboutMeContent() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Informasi User',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          _buildInfoRow(
+            'Email address',
+            'dandycandra@365.telkomuniversity.ac.id',
+          ),
+          const SizedBox(height: 12),
+          _buildInfoRow('Program Studi', 'D4 Teknologi Rekayasa Multimedia'),
+          const SizedBox(height: 12),
+          _buildInfoRow('Fakultas', 'FIT'),
+          const SizedBox(height: 24),
+
+          const Text(
+            'Aktivitas Login',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          _buildInfoRow(
+            'First access to site',
+            'Monday, 7 September 2020, 9:27 AM  (288 days 12 hours)',
+          ),
+          const SizedBox(height: 12),
+          _buildInfoRow(
+            'Last access to site',
+            'Tuesday, 22 June 2021, 9:44 PM  (now)',
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildContentCard(String content) {
@@ -188,6 +251,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
         style: const TextStyle(fontSize: 16, color: Colors.black87),
         textAlign: TextAlign.center,
       ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 14, color: Colors.black87),
+        ),
+      ],
     );
   }
 }
